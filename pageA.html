@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <h2>pageA</h2>
+    <div id="box">
+      <p>输入：<input type="text" id="input" /><button>发送</button></p>
+      <p><pre class="in-box">接收：</pre></p>
+    </div>
+  </body>
+  <script>
+    let in_box = document.querySelector('.in-box')
+    function socketConnect(url) {
+      // 客户端与服务器进行连接
+      let ws = new WebSocket(url); // 返回`WebSocket`对象，赋值给变量ws
+      // 连接成功回调
+      ws.onopen = (e) => {
+        console.log("连接成功", e);
+        ws.send("链接成功"); // 客户端与服务器端通信
+      };
+      // 监听服务器端返回的信息
+      ws.onmessage = (e) => {
+        in_box.innerHTML += e.data
+        // do something
+      };
+      return ws; // 返回websocket对象
+    }
+    let wsValue = socketConnect("ws://127.0.0.1:8080"); // websocket对象
+    const btn = document.querySelector('button')
+    btn.addEventListener('click', () => {
+      let input_value = document.querySelector('input').value
+      wsValue.send(input_value);
+    })
+  </script>
+</html>
